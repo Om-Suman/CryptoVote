@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voting Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="flex">
+      <!-- Sidebar -->
+      <div class="w-1/5 bg-gray-900 text-white p-5 h-screen">
+        <h2 class="text-2xl font-bold mb-5">Admin Panel</h2>
+        <a href="{% url 'dashboard' %}" class="block py-2">Dashboard</a>
+        <a href="{% url 'logout' %}" class="block py-2">Logout</a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="w-4/5 p-10">
+        <h1 class="text-3xl font-bold">Hi, {{ request.user.username }}! 👋</h1>
+        <p class="text-gray-600">Welcome to your Voting Dashboard.</p>
+
+        <!-- Voting Statistics -->
+        <div class="grid grid-cols-3 gap-4 mt-6">
+          <div class="bg-blue-500 text-white p-5 rounded-lg">
+            <h3 class="text-xl">Total Votes</h3>
+            <p id="total_votes" class="text-2xl">0</p>
+          </div>
+          <div class="bg-green-500 text-white p-5 rounded-lg">
+            <h3 class="text-xl">Total Candidates</h3>
+            <p id="total_candidates" class="text-2xl">0</p>
+          </div>
+          <div class="bg-yellow-500 text-white p-5 rounded-lg">
+            <h3 class="text-xl">Total Voters</h3>
+            <p id="total_voters" class="text-2xl">0</p>
+          </div>
+        </div>
+
+        <!-- Voting Section -->
+        <div class="mt-8">
+          <h2 class="text-xl font-bold mb-3">Cast Your Vote</h2>
+          <form id="voteForm">
+            <select id="candidateSelect" class="w-full p-2 border rounded-lg">
+              {% for candidate in candidates %}
+              <option value="{{ candidate.id }}">
+                {{ candidate.name }} - {{ candidate.position.title }}
+              </option>
+              {% endfor %}
+            </select>
+            <button
+              type="submit"
+              class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg w-full hover:bg-green-700"
+            >
+              Submit Vote
+            </button>
+          </form>
+          <p id="voteMessage" class="text-red-500 mt-2 hidden"></p>
+        </div>
+
+        <!-- Chart -->
+        <div class="mt-8">
+          <h2 class="text-xl font-bold mb-3">Votes Per Candidate</h2>
+          <canvas id="voteChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Fetch and Update Vote Stats
+      function updateVoteStats() {
+        fetch("/api/vote-stats/")
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("total_votes").innerText = data.total_votes;
+            document.getElementById("total_candidates").innerText =
+              data.total_candidates;
+            document.getElementById("total_voters").innerText =
+              data.total_voters;
+            updateVoteChart(data.votes_per_candidate);
+          });
+      }
+
+      // Submit Vote
+      document
+        .getElementById("voteForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          let candidateId = document.getElementById("candidateSelect").value;
+
+          fetch("/api/cast-vote/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({ candidate_id: candidateId }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.error) {
+                document.getElementById("voteMessage").innerText = data.error;
+                document
+                  .getElementById("voteMessage")
+                  .classList.remove("hidden");
+              } else {
+                alert(data.message);
+                updateVoteStats();
+              }
+            });
+        });
+
+      // Render Chart
+      let chartInstance;
+      function updateVoteChart(votes) {
+        let ctx = document.getElementById("voteChart").getContext("2d");
+        if (chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: Object.keys(votes),
+            datasets: [
+              {
+                label: "Votes",
+                data: Object.values(votes),
+                backgroundColor: "rgba(54, 162, 235, 0.6)",
+              },
+            ],
+          },
+        });
+      }
+
+      updateVoteStats(); // Initial load
+    </script>
+  </body>
+</html>

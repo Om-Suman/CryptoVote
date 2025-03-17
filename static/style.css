@@ -1,0 +1,114 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dashboard Container */
+.container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding: 20px;
+  background: #333;
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+header span {
+  font-weight: bold;
+}
+
+.open {
+  color: green;
+}
+
+.closed {
+  color: red;
+}
+
+/* Stats Cards */
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.card {
+  background: #007bff;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 30%;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.card:nth-child(2) {
+  background: #28a745;
+}
+
+.card:nth-child(3) {
+  background: #ffc107;
+}
+
+/* Votes Tally */
+.votes-tally {
+  margin-top: 30px;
+}
+
+.votes-tally table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.votes-tally th,
+.votes-tally td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.votes-tally th {
+  background: #007bff;
+  color: white;
+}
+
+/* Audit Log */
+.audit {
+  margin-top: 30px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+}
+
+/* Progress Bar Styling */
+.progress-bar {
+  width: 100%;
+  background: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress {
+  background: green;
+  color: white;
+  text-align: center;
+  padding: 5px;
+  width: 0; /* Start at 0, will be updated */
+}
