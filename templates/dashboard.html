@@ -1,138 +1,277 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Voting Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dashboard - CryptoVote</title>
+    <style>
+      /* General Styles */
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        height: 100vh;
+      }
+
+      .main-container {
+        display: flex;
+        flex-grow: 1;
+        width: 100%;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 225px;
+        background-color: #1a1d26;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 20px 15px;
+        position: fixed;
+        height: 100vh;
+        z-index: 10;
+      }
+
+      .sidebar h2 {
+        text-align: left;
+        margin-bottom: 20px;
+        padding-left: 10px;
+        font-size: 22px;
+      }
+
+      .sidebar ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 10px;
+      }
+
+      /* Sidebar Links */
+      .sidebar ul li {
+        margin-bottom: 10px; /* Space between links */
+      }
+
+      .sidebar ul li a {
+        text-decoration: none;
+        color: #fff;
+        display: block;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: background 0.3s, padding-left 0.2s;
+      }
+
+      /* Hover effect */
+      .sidebar ul li a:hover {
+        background-color: #333945;
+        padding-left: 20px; /* Slight indent on hover */
+      }
+
+      /* Active link styling */
+      .sidebar ul li a.active {
+        background-color: #333945;
+        border-left: 4px solid #4f8cf7; /* Blue left border */
+        border-radius: 8px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      /* Content Section */
+      .content {
+        margin-left: 250px;
+        flex-grow: 1;
+        padding: 20px;
+        background-color: #f4f4f4;
+        overflow-y: auto;
+      }
+
+      h1,
+      h2 {
+        margin-top: 20px;
+      }
+      /* Stats Section */
+      .stats-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        gap: 10px;
+      }
+
+      .stat-box {
+        flex: 1;
+        padding: 20px;
+        border-radius: 5px;
+        color: #fff;
+        text-align: center;
+      }
+
+      .stat-box.blue {
+        background-color: #4f8cf7;
+      }
+
+      .stat-box.green {
+        background-color: #28a745;
+      }
+
+      .stat-box.yellow {
+        background-color: #ffc107;
+      }
+
+      /* Table Styles */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      table th,
+      table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+
+      table th {
+        background-color: #4f8cf7;
+        color: white;
+      }
+
+      /* Status Styles */
+      .status-active {
+        color: #28a745;
+        font-weight: bold;
+      }
+
+      .status-completed {
+        color: #6c757d;
+        font-weight: bold;
+      }
+
+      /* Ensuring footer stays at the bottom */
+      html,
+      body {
+        height: 100%;
+      }
+    </style>
   </head>
-  <body class="bg-gray-100">
-    <div class="flex">
-      <!-- Sidebar -->
-      <div class="w-1/5 bg-gray-900 text-white p-5 h-screen">
-        <h2 class="text-2xl font-bold mb-5">Admin Panel</h2>
-        <a href="{% url 'dashboard' %}" class="block py-2">Dashboard</a>
-        <a href="{% url 'logout' %}" class="block py-2">Logout</a>
+  <body>
+    <div class="main-container">
+      <!-- Sidebar Section -->
+      <div class="sidebar">
+        <h2><strong>CryptoVote</strong></h2>
+        <ul>
+          <li>
+            <a
+              href="{% url 'dashboard' %}"
+              class="{% if active_page == 'dashboard' %}active{% endif %}"
+              >📊 Dashboard</a
+            >
+          </li>
+          <li>
+            <a
+              href="{% url 'profile' %}"
+              class="{% if active_page == 'profile' %}active{% endif %}"
+              >👤 Profile</a
+            >
+          </li>
+          <li>
+            <a
+              href="{% url 'vote' %}"
+              class="{% if active_page == 'vote' %}active{% endif %}"
+              >🗳️ Vote</a
+            >
+          </li>
+          <li>
+            <a
+              href="{% url 'settings' %}"
+              class="{% if active_page == 'settings' %}active{% endif %}"
+              >⚙️ Settings</a
+            >
+          </li>
+          <li>
+            <a href="{% url 'logout' %}">📚 Logout</a>
+          </li>
+        </ul>
       </div>
 
-      <!-- Main Content -->
-      <div class="w-4/5 p-10">
-        <h1 class="text-3xl font-bold">Hi, {{ request.user.username }}! 👋</h1>
-        <p class="text-gray-600">Welcome to your Voting Dashboard.</p>
+      <!-- Content Section -->
+      <div class="content">
+        <h1>📊 Dashboard</h1>
 
-        <!-- Voting Statistics -->
-        <div class="grid grid-cols-3 gap-4 mt-6">
-          <div class="bg-blue-500 text-white p-5 rounded-lg">
-            <h3 class="text-xl">Total Votes</h3>
-            <p id="total_votes" class="text-2xl">0</p>
+        <!-- Stats Section -->
+        <div class="stats-container">
+          <div class="stat-box blue">
+            <h3>Total Elections</h3>
+            <p>{{ total_elections }}</p>
           </div>
-          <div class="bg-green-500 text-white p-5 rounded-lg">
-            <h3 class="text-xl">Total Candidates</h3>
-            <p id="total_candidates" class="text-2xl">0</p>
+          <div class="stat-box green">
+            <h3>Ongoing Elections</h3>
+            <p>{{ ongoing_elections.count }}</p>
           </div>
-          <div class="bg-yellow-500 text-white p-5 rounded-lg">
-            <h3 class="text-xl">Total Voters</h3>
-            <p id="total_voters" class="text-2xl">0</p>
+          <div class="stat-box yellow">
+            <h3>Total Voters</h3>
+            <p>{{ total_voters }}</p>
           </div>
         </div>
 
-        <!-- Voting Section -->
-        <div class="mt-8">
-          <h2 class="text-xl font-bold mb-3">Cast Your Vote</h2>
-          <form id="voteForm">
-            <select id="candidateSelect" class="w-full p-2 border rounded-lg">
-              {% for candidate in candidates %}
-              <option value="{{ candidate.id }}">
-                {{ candidate.name }} - {{ candidate.position.title }}
-              </option>
-              {% endfor %}
-            </select>
-            <button
-              type="submit"
-              class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg w-full hover:bg-green-700"
-            >
-              Submit Vote
-            </button>
-          </form>
-          <p id="voteMessage" class="text-red-500 mt-2 hidden"></p>
-        </div>
+        <!-- Ongoing Elections Section -->
+        <h2>🗳️ Ongoing Elections</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Election Name</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for election in ongoing_elections %}
+            <tr>
+              <td>{{ election.title }}</td>
+              <td>{{ election.start_date|date:"F d, Y" }}</td>
+              <td>{{ election.end_date|date:"F d, Y" }}</td>
+              <td><span class="status-active">Ongoing</span></td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4">No ongoing elections.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
 
-        <!-- Chart -->
-        <div class="mt-8">
-          <h2 class="text-xl font-bold mb-3">Votes Per Candidate</h2>
-          <canvas id="voteChart"></canvas>
-        </div>
+        <!-- Completed Elections Section -->
+        <h2>📚 Past Elections</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Election Name</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for election in completed_elections %}
+            <tr>
+              <td>{{ election.title }}</td>
+              <td>{{ election.start_date|date:"F d, Y" }}</td>
+              <td>{{ election.end_date|date:"F d, Y" }}</td>
+              <td><span class="status-completed">Completed</span></td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4">No completed elections.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
-
-    <script>
-      // Fetch and Update Vote Stats
-      function updateVoteStats() {
-        fetch("/api/vote-stats/")
-          .then((response) => response.json())
-          .then((data) => {
-            document.getElementById("total_votes").innerText = data.total_votes;
-            document.getElementById("total_candidates").innerText =
-              data.total_candidates;
-            document.getElementById("total_voters").innerText =
-              data.total_voters;
-            updateVoteChart(data.votes_per_candidate);
-          });
-      }
-
-      // Submit Vote
-      document
-        .getElementById("voteForm")
-        .addEventListener("submit", function (event) {
-          event.preventDefault();
-          let candidateId = document.getElementById("candidateSelect").value;
-
-          fetch("/api/cast-vote/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: JSON.stringify({ candidate_id: candidateId }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.error) {
-                document.getElementById("voteMessage").innerText = data.error;
-                document
-                  .getElementById("voteMessage")
-                  .classList.remove("hidden");
-              } else {
-                alert(data.message);
-                updateVoteStats();
-              }
-            });
-        });
-
-      // Render Chart
-      let chartInstance;
-      function updateVoteChart(votes) {
-        let ctx = document.getElementById("voteChart").getContext("2d");
-        if (chartInstance) chartInstance.destroy();
-
-        chartInstance = new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: Object.keys(votes),
-            datasets: [
-              {
-                label: "Votes",
-                data: Object.values(votes),
-                backgroundColor: "rgba(54, 162, 235, 0.6)",
-              },
-            ],
-          },
-        });
-      }
-
-      updateVoteStats(); // Initial load
-    </script>
   </body>
 </html>

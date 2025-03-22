@@ -1,44 +1,58 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
 
-class Position(models.Model):
-    title = models.CharField(max_length=255)
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, null=True)
+    email = models.CharField(max_length=50, blank=True, null=True)
+    timezone = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+    
+# Election Model
+class Election(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title
 
+    def total_votes(self):
+        return Vote.objects.filter(election=self).count()
+
+
+# Candidate Model
 class Candidate(models.Model):
-    name = models.CharField(max_length=255)
-    position = models.ForeignKey(Position, on_delete=models.CASCADE, related_name="candidates")
-    votes = models.IntegerField(default=0)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    department = models.CharField(max_length=200, blank=True)
+    bio = models.TextField(blank=True)
+    votes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f"{self.name} - {self.position.title}"
+        return f"{self.name} ({self.department})"
 
-class Voter(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,default=1)
-    has_voted = models.BooleanField(default=False)
+    def vote_percentage(self):
+        total_votes = self.election.total_votes()
+        if total_votes == 0:
+            return 0
+        return (self.votes / total_votes) * 100
 
-    def __str__(self):
-        return self.user.username
 
+# Vote Model
 class Vote(models.Model):
-    voter = models.ForeignKey(Voter, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now)  # Default for existing rows
+    voted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("voter", "candidate")
-
-    def clean(self):
-        if Vote.objects.filter(voter=self.voter, candidate__position=self.candidate.position).exists():
-            raise ValidationError("You can only vote once per position.")
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
+        unique_together = ("user", "election")
 
     def __str__(self):
-        return f"{self.voter.user.username} -> {self.candidate.name} ({self.candidate.position.title})"
+        return f"{self.user.username} voted for {self.candidate.name} in {self.election.title}"

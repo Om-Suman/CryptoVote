@@ -1,0 +1,302 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - CryptoVote</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" />
+  </head>
+  <body>
+    <style>
+      /* General Styles */
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        height: 100vh;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 225px;
+        background-color: #1a1d26;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 20px 15px;
+        position: fixed;
+        height: 100vh;
+        z-index: 10;
+      }
+
+      .sidebar h2 {
+        text-align: left;
+        margin-bottom: 20px;
+        padding-left: 10px;
+        font-size: 22px;
+      }
+
+      .sidebar ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 10px;
+      }
+
+      /* Sidebar Links */
+      .sidebar ul li {
+        margin-bottom: 10px; /* Space between links */
+      }
+
+      .sidebar ul li a {
+        text-decoration: none;
+        color: #fff;
+        display: block;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: background 0.3s, padding-left 0.2s;
+      }
+
+      /* Hover effect */
+      .sidebar ul li a:hover {
+        background-color: #333945;
+        padding-left: 20px; /* Slight indent on hover */
+      }
+
+      /* Active link styling */
+      .sidebar ul li a.active {
+        background-color: #333945;
+        border-left: 4px solid #4f8cf7; /* Blue left border */
+        border-radius: 8px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      /* Main Content */
+      .content {
+        margin-left: 250px;
+        flex-grow: 1;
+        padding: 20px;
+        background-color: #f4f4f4;
+        overflow-y: auto;
+      }
+
+      /* Settings Page Container */
+      .settings-container {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 60%;
+        margin: 20px auto;
+      }
+
+      /* Settings Header */
+      h1 {
+        font-size: 26px;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      /* Settings Form */
+      .settings-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* Form Group Styling */
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+      }
+
+      label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+      }
+
+      /* Input and Select Fields */
+      input,
+      select {
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        transition: border 0.3s;
+      }
+
+      /* Focus Effect */
+      input:focus,
+      select:focus {
+        border-color: #4f8cf7;
+        box-shadow: 0 0 8px rgba(79, 140, 247, 0.2);
+      }
+
+      /* Checkbox Group Styling */
+      .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .checkbox-group label {
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      /* Custom Checkbox Style */
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #4f8cf7;
+        cursor: pointer;
+      }
+
+      /* Save Button */
+      .save-btn {
+        background-color: #4f8cf7;
+        color: #fff;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+        transition: background 0.3s;
+      }
+
+      /* Hover Effect */
+      .save-btn:hover {
+        background-color: #3c75db;
+      }
+
+      /* Disabled Button Style */
+      .save-btn:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
+      }
+
+      /* Two-Factor and Privacy Settings */
+      select {
+        background-color: #fff;
+        cursor: pointer;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: #1a1d26;
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
+        width: 100%;
+        margin-top: auto;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .content {
+          margin-left: 0;
+          padding: 15px;
+        }
+
+        .sidebar {
+          width: 100%;
+          position: relative;
+          height: auto;
+          padding: 10px;
+        }
+
+        .settings-container {
+          width: 90%;
+        }
+      }
+    </style>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>CryptoVote</h2>
+      <ul>
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'profile' %}">Profile</a></li>
+        <li><a href="{% url 'vote' %}">Vote</a></li>
+        <li><a href="{% url 'settings' %}" class="active">Settings</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <h1>Settings</h1>
+      <div class="settings-container">
+        <form class="settings-form" method="post" action="{% url 'settings' %}">
+          {% csrf_token %}
+
+          <!-- Change Password Section -->
+          <div class="form-group">
+            <label for="new-password">Change Password</label>
+            <input
+              type="password"
+              id="new-password"
+              name="new_password"
+              placeholder="Enter new password"
+              required
+            />
+          </div>
+
+          <!-- Email Preferences Section -->
+          <div class="form-group">
+            <label>Email Notifications</label>
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" name="voting_updates" checked />
+                Receive voting updates
+              </label>
+              <label>
+                <input type="checkbox" name="newsletters" />
+                Receive newsletters
+              </label>
+              <label>
+                <input type="checkbox" name="security_alerts" />
+                Security alerts
+              </label>
+            </div>
+          </div>
+
+          <!-- Security Settings Section -->
+          <div class="form-group">
+            <label for="two-factor">Enable Two-Factor Authentication</label>
+            <select id="two-factor" name="two_factor">
+              <option value="off">Disabled</option>
+              <option value="sms">SMS Authentication</option>
+              <option value="auth-app">Authenticator App</option>
+            </select>
+          </div>
+
+          <!-- Privacy Settings -->
+          <div class="form-group">
+            <label for="privacy-setting">Privacy Settings</label>
+            <select id="privacy-setting" name="privacy_setting">
+              <option value="public">Public Profile</option>
+              <option value="private">Private Profile</option>
+              <option value="friends-only">Friends Only</option>
+            </select>
+          </div>
+
+          <!-- Save Button -->
+          <button type="submit" class="save-btn">Save Settings</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

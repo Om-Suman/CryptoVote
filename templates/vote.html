@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vote - CryptoVote</title>
+
+    <!-- Inline Styles -->
+    <style>
+      /* General styling */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f7fc;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 225px;
+        background-color: #1a1d26;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 20px 15px;
+        position: fixed;
+        height: 100vh;
+        z-index: 10;
+      }
+
+      .sidebar h2 {
+        text-align: left;
+        margin-bottom: 20px;
+        padding-left: 10px;
+        font-size: 22px;
+      }
+
+      .sidebar ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 10px;
+      }
+
+      /* Sidebar Links */
+      .sidebar ul li {
+        margin-bottom: 10px; /* Space between links */
+      }
+
+      .sidebar ul li a {
+        text-decoration: none;
+        color: #fff;
+        display: block;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: background 0.3s, padding-left 0.2s;
+      }
+
+      /* Hover effect */
+      .sidebar ul li a:hover {
+        background-color: #333945;
+        padding-left: 20px; /* Slight indent on hover */
+      }
+
+      /* Active link styling */
+      .sidebar ul li a.active {
+        background-color: #333945;
+        border-left: 4px solid #4f8cf7; /* Blue left border */
+        border-radius: 8px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      /* Main Content */
+      .content {
+        margin-left: 270px;
+        padding: 20px;
+      }
+
+      h1,
+      h2 {
+        margin-top: 0;
+      }
+
+      /* Election container */
+      .election-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .election-box {
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .vote-form {
+        margin-top: 10px;
+      }
+
+      .candidate-option {
+        display: block;
+        margin: 10px 0;
+      }
+
+      .btn-vote {
+        padding: 10px 20px;
+        background-color: #1abc9c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .btn-vote:hover {
+        background-color: #16a085;
+      }
+
+      /* Results section */
+      .results-section {
+        margin-top: 20px;
+      }
+
+      .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .styled-table th,
+      .styled-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      .styled-table th {
+        background-color: #2c3e50;
+        color: white;
+      }
+
+      .voted-info {
+        color: #16a085;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+
+      .no-elections {
+        font-size: 18px;
+        color: #888;
+        margin-top: 20px;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 30px;
+        text-align: center;
+        padding: 10px 0;
+        background-color: #1a1a2e;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>CryptoVote</h2>
+      <ul>
+        <li>
+          <a
+            href="{% url 'dashboard' %}"
+            class="{% if active_page == 'dashboard' %}active{% endif %}"
+          >
+            <i>📊</i> Dashboard
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'profile' %}"
+            class="{% if active_page == 'profile' %}active{% endif %}"
+          >
+            <i>🧑‍💼</i> Profile
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'vote' %}"
+            class="{% if active_page == 'vote' %}active{% endif %}"
+          >
+            <i>🗳️</i> Vote
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'settings' %}"
+            class="{% if active_page == 'settings' %}active{% endif %}"
+          >
+            <i>⚙️</i> Settings
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'logout' %}"><i>📚</i> Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <h1>🗳️ Vote</h1>
+
+      <!-- Ongoing Elections Section -->
+      <h2>🕒 Ongoing Elections</h2>
+      {% if ongoing_elections %}
+      <div class="election-container">
+        {% for election in ongoing_elections %}
+        <div class="election-box">
+          <h3>{{ election.title }}</h3>
+          <p>{{ election.description }}</p>
+
+          {% if election.id in voted_election_ids %}
+          <!-- Show candidate information after voting -->
+          <div class="results-section">
+            <h4>📝 Candidate Results:</h4>
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  <th>Candidate Name</th>
+                  <th>Total Votes</th>
+                  <th>Percentage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for candidate in election.candidate_set.all %}
+                <tr>
+                  <td>{{ candidate.name }}</td>
+                  <td>{{ candidate.votes }}</td>
+                  <td>{{ candidate.vote_percentage|floatformat:2 }}%</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <p class="voted-info">
+              ✅ You have already voted in this election.
+            </p>
+          </div>
+          {% else %}
+          <!-- Show vote form if not voted yet -->
+          <form method="POST" action="{% url 'vote' %}" class="vote-form">
+            {% csrf_token %}
+            <input type="hidden" name="election_id" value="{{ election.id }}" />
+            <div class="candidate-list">
+              {% for candidate in election.candidate_set.all %}
+              <label class="candidate-option">
+                <input
+                  type="radio"
+                  name="candidate_id"
+                  value="{{ candidate.id }}"
+                  required
+                />
+                <span>{{ candidate.name }} ({{ candidate.department }})</span>
+              </label>
+              {% empty %}
+              <p class="no-candidates">
+                No candidates available for this election.
+              </p>
+              {% endfor %}
+            </div>
+            <button type="submit" class="btn-vote">Vote Now</button>
+          </form>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="no-elections">No ongoing elections at the moment.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
