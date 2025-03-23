@@ -70,11 +70,18 @@ def dashboard(request):
     # Total voters count (from Profile)
     total_voters = Profile.objects.count()
 
+    # Check if user is authenticated before getting username
+    if request.user.is_authenticated:
+        username = request.user.username
+    else:
+        username = "Guest"  # Default if no user is logged in
+
     context = {
         "total_elections": total_elections,
         "ongoing_elections": ongoing_elections,
         "completed_elections": completed_elections,
         "total_voters": total_voters,
+        "username": username,  # Pass username to the template
         "active_page": "dashboard",  # Mark dashboard as active in sidebar
     }
     return render(request, "dashboard.html", context)
