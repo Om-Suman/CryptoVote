@@ -87,8 +87,20 @@
       /* Election container */
       .election-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: 1fr;
         gap: 20px;
+      }
+      @media (min-width: 768px) {
+        .election-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .scroll-wrapper {
+        max-height: 75vh;
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-top: 10px;
       }
 
       .election-box {
@@ -97,6 +109,7 @@
         border: 1px solid #ddd;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
       }
 
       .vote-form {
@@ -216,6 +229,7 @@
       <!-- Ongoing Elections Section -->
       <h2>🕒 Ongoing Elections</h2>
       {% if ongoing_elections %}
+      <div class="scroll-wrapper"
       <div class="election-container">
         {% for election in ongoing_elections %}
         <div class="election-box">
@@ -276,6 +290,7 @@
         </div>
         {% endfor %}
       </div>
+    </div>
       {% else %}
       <p class="no-elections">No ongoing elections at the moment.</p>
       {% endif %}

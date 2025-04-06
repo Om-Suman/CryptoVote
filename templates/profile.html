@@ -266,19 +266,35 @@ select:focus {
 
     <!-- Main Content -->
     <div class="content">
-      <div class="profile-container">
-        <div class="profile-header">
-          <div class="profile-info">
+      <div class="profile-header">
+        <div class="profile-info">
+          <form
+            class="profile-form"
+            method="POST"
+            enctype="multipart/form-data"
+            style="display: flex; align-items: center; gap: 20px;"
+          >
+            {% csrf_token %}
             <label for="profilePic" class="profile-upload">
-              <img
-                id="profileImg"
-                src="{% static 'profile-placeholder.png' %}"
-                alt="Profile Picture"
-                class="profile-img"
-              />
+              {% if user.profile.profile_pic %}
+  <img
+    id="profileImg"
+    src="{{ user.profile.profile_pic.url }}"
+    alt="Profile Picture"
+    class="profile-img"
+  />
+{% else %}
+  <img
+    id="profileImg"
+    src="{% static 'profile-placeholder.png' %}"
+    alt="Profile Picture"
+    class="profile-img"
+  />
+{% endif %}
               <input
                 type="file"
                 id="profilePic"
+                name="profilePic"
                 accept="image/*"
                 onchange="previewImage(event)"
               />
@@ -286,14 +302,13 @@ select:focus {
             </label>
             <div>
               <h2>{{ user.username }}</h2>
-             
             </div>
           </div>
           <button class="edit-btn" onclick="enableEdit()">Edit</button>
         </div>
 
         <!-- Profile Form -->
-        <form class="profile-form" method="POST">
+        <form class="profile-form" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form-row">
             <div class="form-group">

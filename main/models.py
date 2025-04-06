@@ -7,6 +7,7 @@ class Profile(models.Model):
     country = models.CharField(max_length=50, blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)
     timezone = models.CharField(max_length=50, blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"

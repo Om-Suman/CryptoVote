@@ -108,6 +108,10 @@ def profile(request):
         user.profile.country = country
         user.email = email
         user.profile.timezone = timezone
+
+        if 'profilePic' in request.FILES:
+            user.profile.profile_pic = request.FILES['profilePic']
+
         user.save()
         user.profile.save()
 
@@ -173,7 +177,7 @@ def vote(request):
 
 
 @login_required
-def settings(request):
+def user_settings(request):
     if request.method == "POST":
         # Get data from form
         new_password = request.POST.get("new_password")
