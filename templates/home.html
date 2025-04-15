@@ -11,6 +11,7 @@
       body {
         font-family: "Poppins", sans-serif;
       }
+
       html {
         scroll-behavior: smooth;
       }
@@ -23,22 +24,18 @@
         <h1 class="text-2xl font-bold">CryptoVote</h1>
         <ul class="hidden md:flex space-x-6">
           <li>
-            <a href="#home" class="nav-link hover:text-cyan-400 transition"
-              >Home</a
-            >
+            <a href="#home" class="hover:text-cyan-400 transition">Home</a>
           </li>
           <li>
-            <a href="#about" class="nav-link hover:text-cyan-400 transition"
-              >About</a
-            >
+            <a href="#about" class="hover:text-cyan-400 transition">About</a>
           </li>
           <li>
-            <a href="#feedback" class="nav-link hover:text-cyan-400 transition"
+            <a href="#feedback" class="hover:text-cyan-400 transition"
               >Feedback</a
             >
           </li>
           <li>
-            <a href="#features" class="nav-link hover:text-cyan-400 transition"
+            <a href="#features" class="hover:text-cyan-400 transition"
               >Features</a
             >
           </li>
@@ -46,16 +43,14 @@
         <div class="flex space-x-4">
           <a
             href="{% url 'login' %}"
-            class="border border-white px-4 py-2 rounded-lg text-white hover:bg-white hover:text-blue-900 transition"
+            class="border border-white px-4 py-2 rounded-lg hover:bg-white hover:text-blue-900 transition"
+            >Login</a
           >
-            Login
-          </a>
           <a
             href="{% url 'signup' %}"
-            class="border border-white px-4 py-2 rounded-lg text-white hover:bg-white hover:text-blue-900 transition"
+            class="border border-white px-4 py-2 rounded-lg hover:bg-white hover:text-blue-900 transition"
+            >Sign Up</a
           >
-            Sign Up
-          </a>
         </div>
       </div>
     </nav>
@@ -93,13 +88,7 @@
       <p class="text-lg text-gray-700">
         CryptoVote is a secure and transparent online voting platform that
         ensures fair and reliable elections. Our platform is built to provide a
-        seamless and user-friendly voting experience, allowing organizations,
-        institutions, and communities to conduct elections with confidence. With
-        advanced security protocols and real-time result tracking, CryptoVote
-        guarantees the integrity of the voting process while maintaining voter
-        privacy. Whether it's student elections, corporate decisions, or
-        community polls, CryptoVote empowers participants to make their voices
-        heard in a safe and efficient environment.
+        seamless and user-friendly voting experience.
       </p>
     </section>
 
@@ -134,7 +123,6 @@
       <div
         class="flex flex-col md:flex-row justify-center space-y-6 md:space-y-0 md:space-x-6"
       >
-        <!-- Testimonial 1 -->
         <div class="p-6 bg-white rounded-lg shadow-md text-center max-w-xs">
           <p class="text-lg italic text-gray-700">
             "CryptoVote made our student elections seamless and secure. Highly
@@ -142,8 +130,6 @@
           </p>
           <h4 class="mt-4 font-bold text-blue-900">- Amit Sharma</h4>
         </div>
-
-        <!-- Testimonial 2 -->
         <div class="p-6 bg-white rounded-lg shadow-md text-center max-w-xs">
           <p class="text-lg italic text-gray-700">
             "The transparency and reliability of CryptoVote give us confidence
@@ -151,8 +137,6 @@
           </p>
           <h4 class="mt-4 font-bold text-blue-900">- Priya Patel</h4>
         </div>
-
-        <!-- Testimonial 3 -->
         <div class="p-6 bg-white rounded-lg shadow-md text-center max-w-xs">
           <p class="text-lg italic text-gray-700">
             "An intuitive platform that made our corporate voting experience
@@ -182,29 +166,5 @@
     <footer class="bg-blue-900 text-white text-center p-6">
       <p>© 2025 CryptoVote. All rights reserved.</p>
     </footer>
-
-    <!-- JavaScript for Smooth Scroll & Vote Counter Animation -->
-    <script>
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute("href"));
-          if (target) {
-            window.scrollTo({ top: target.offsetTop - 80, behavior: "smooth" });
-          }
-        });
-      });
-
-      let count = 0;
-      function updateCounter() {
-        if (count < 1234567) {
-          count += 10000;
-          document.getElementById("vote-counter").textContent =
-            count.toLocaleString();
-          requestAnimationFrame(updateCounter);
-        }
-      }
-      updateCounter();
-    </script>
   </body>
 </html>
