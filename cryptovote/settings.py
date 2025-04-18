@@ -25,7 +25,15 @@ SECRET_KEY = 'django-insecure-2kqj8n2!zif=f18_zbjgz5^#fq^&2t#!3kklmq2j%15m94a91c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+import os
+
+ALLOWED_HOSTS = [
+    'cryptovote.onrender.com',
+    'www.cryptovote.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
+
 
 
 # Application definition
@@ -37,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'rest_framework',
     'main',
     'django_select2',
 ]
@@ -52,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'cryptovote.urls'
@@ -121,7 +129,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = '/static/' 
 STATICFILES_DIRS = [
-    BASE_DIR, "static",  # Ensure correct path
+    BASE_DIR, "static",  #
 ]
 
 
