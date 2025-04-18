@@ -1,0 +1,16 @@
+# render.yaml
+services:
+  - type: web
+    name: cryptovote
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn cryptovote.wsgi:application
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: cryptovote.settings
+      - key: PYTHON_VERSION
+        value: 3.11
+    postDeployCommand: |
+      python manage.py migrate
+      python manage.py collectstatic --noinput
