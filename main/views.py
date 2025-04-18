@@ -12,11 +12,9 @@ import json
 import pycountry
 import pytz
 import re
+
 def home(request):
     return render(request, 'home.html')
-
-
-
 
 def signup_view(request):
     if request.method == "POST":
@@ -134,16 +132,16 @@ def profile(request):
     timezones = pytz.all_timezones
 
     if request.method == 'POST':
-        full_name = request.POST.get('fullName', '')
-        nick_name = request.POST.get('nickName', '')
+        first_name = request.POST.get('fullName', '')
+        last_name = request.POST.get('nickName', '')
         gender = request.POST.get('gender', '')
         country = request.POST.get('country', '')
         email = request.POST.get('email', '')
         timezone = request.POST.get('timezone', '')
 
         # Update user and profile details
-        user.first_name = full_name
-        user.last_name = nick_name
+        user.first_name = first_name
+        user.last_name = last_name
         user.profile.gender = gender
         user.profile.country = country
         user.email = email

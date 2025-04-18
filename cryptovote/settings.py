@@ -25,7 +25,6 @@ SECRET_KEY = 'django-insecure-2kqj8n2!zif=f18_zbjgz5^#fq^&2t#!3kklmq2j%15m94a91c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-import os
 
 ALLOWED_HOSTS = [
     'cryptovote.onrender.com',
