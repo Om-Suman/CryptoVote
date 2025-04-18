@@ -218,13 +218,7 @@
               >🗳️ Vote</a
             >
           </li>
-          <li>
-            <a
-              href="{% url 'settings' %}"
-              class="{% if active_page == 'settings' %}active{% endif %}"
-              >⚙️ Settings</a
-            >
-          </li>
+          <li><a href="{% url 'change_password' %}">🔒 Change Password</a></li>
           <li>
             <a href="{% url 'logout' %}">📚 Logout</a>
           </li>

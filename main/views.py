@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout,update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -10,8 +11,12 @@ from django.utils import timezone
 import json
 import pycountry
 import pytz
+import re
 def home(request):
     return render(request, 'home.html')
+
+
+
 
 def signup_view(request):
     if request.method == "POST":
@@ -20,18 +25,51 @@ def signup_view(request):
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
 
+        # Check if passwords match
         if password1 != password2:
             messages.error(request, "Passwords do not match!")
             return redirect("signup")
 
+        # Check if username already exists
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken!")
             return redirect("signup")
 
+        # Check if email already exists
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already in use!")
             return redirect("signup")
 
+        # Password length check
+        if len(password1) < 8:
+            messages.error(request, "Password must be at least 8 characters long!")
+            return redirect("signup")
+
+        # Check if password is too similar to username
+        if username.lower() in password1.lower():
+            messages.error(request, "Password is too similar to the username!")
+            return redirect("signup")
+
+        # Check for common passwords (basic example)
+        common_passwords = ["password", "123456", "qwerty", "abc123"]
+        if password1.lower() in common_passwords:
+            messages.error(request, "Password is too common!")
+            return redirect("signup")
+
+        # Check for at least one number, one uppercase letter, and one lowercase letter
+        if not re.search(r"\d", password1):
+            messages.error(request, "Password must contain at least one number!")
+            return redirect("signup")
+        
+        if not re.search(r"[A-Z]", password1):
+            messages.error(request, "Password must contain at least one uppercase letter!")
+            return redirect("signup")
+
+        if not re.search(r"[a-z]", password1):
+            messages.error(request, "Password must contain at least one lowercase letter!")
+            return redirect("signup")
+
+        # Create user
         user = User.objects.create_user(username=username, email=email, password=password1)
         user.save()
 
@@ -39,6 +77,7 @@ def signup_view(request):
         return redirect("login")
 
     return render(request, "signup.html")
+
 
 def login_view(request):
     if request.method == "POST":
@@ -85,6 +124,7 @@ def dashboard(request):
         "active_page": "dashboard",  # Mark dashboard as active in sidebar
     }
     return render(request, "dashboard.html", context)
+
 @login_required
 def profile(request):
     user = request.user
@@ -177,43 +217,20 @@ def vote(request):
 
 
 @login_required
-def user_settings(request):
-    if request.method == "POST":
-        # Get data from form
-        new_password = request.POST.get("new_password")
-        voting_updates = request.POST.get("voting_updates")
-        newsletters = request.POST.get("newsletters")
-        security_alerts = request.POST.get("security_alerts")
-        two_factor = request.POST.get("two_factor")
-        privacy_setting = request.POST.get("privacy_setting")
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Prevent logout after password change
+            messages.success(request, 'Your password was successfully updated!')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(user=request.user)
 
-        # Change password if provided
-        if new_password:
-            request.user.set_password(new_password)
-            request.user.save()
-            messages.success(request, "Password changed successfully!")
-
-        # Save other settings (Here, mock save. Customize for DB if needed)
-        request.session["email_preferences"] = {
-            "voting_updates": True if voting_updates else False,
-            "newsletters": True if newsletters else False,
-            "security_alerts": True if security_alerts else False,
-        }
-        request.session["two_factor"] = two_factor
-        request.session["privacy_setting"] = privacy_setting
-
-        messages.success(request, "Settings saved successfully!")
-        return redirect("settings")
-
-    # Initial data for display
-    context = {
-        "email_preferences": request.session.get("email_preferences", {}),
-        "two_factor": request.session.get("two_factor", "off"),
-        "privacy_setting": request.session.get("privacy_setting", "public"),
-    }
-
-    return render(request, "settings.html", context)
-
+    return render(request, 'change_password.html', {'form': form})
+    
 def logout_view(request):
     logout(request)
-    return redirect('/login/') 
+    return redirect('/') 

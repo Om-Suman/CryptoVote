@@ -1,114 +1,207 @@
 /* General Styling */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Adjust this value based on your header height */
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #f4f4f4;
   margin: 0;
   padding: 0;
 }
 
-/* Dashboard Container */
-.container {
-  width: 80%;
-  margin: auto;
-  padding: 20px;
-  background: #fff;
+/* Navbar Styling */
+nav {
+  background-color: #1e3a8a; /* Blue shade for navbar */
+  color: white;
+  padding: 1rem;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav h1 {
+  font-size: 1.75rem;
+  font-weight: bold;
+}
+
+nav ul {
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #0bd9d9; /* Hover color */
+}
+
+nav .flex {
+  display: flex;
+  gap: 1rem;
+}
+
+nav .flex a {
+  border: 1px solid white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+nav .flex a:hover {
+  background-color: white;
+  color: #1e3a8a;
+}
+
+/* Hero Section */
+#home {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #1e3a8a, #06b6d4);
+  color: white;
+  text-align: center;
+  padding: 2rem;
+}
+
+#home h2 {
+  font-size: 3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#home p {
+  margin-top: 1rem;
+  font-size: 1.125rem;
+}
+
+#home a {
+  margin-top: 2rem;
+  display: inline-block;
+  background-color: white;
+  color: #1e3a8a;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+#home a:hover {
+  transform: scale(1.05);
+}
+
+/* About Section */
+#about {
+  padding: 3rem;
+  text-align: center;
+  background-color: white;
+  border-radius: 8px;
+  margin: 3rem 0;
+}
+
+#about h3 {
+  font-size: 2rem;
+  color: #1e3a8a;
+}
+
+#about p {
+  font-size: 1.125rem;
+  color: #4b5563;
+}
+
+/* Features Section */
+#features {
+  padding: 3rem;
+  background-color: #f9fafb;
+  text-align: center;
+}
+
+#features h3 {
+  font-size: 2rem;
+  color: #1e3a8a;
+  margin-bottom: 2rem;
+}
+
+#features .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+#features .card {
+  background-color: white;
+  padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Header */
-header {
+#features .card h4 {
+  font-size: 1.25rem;
+  color: #1e3a8a;
+}
+
+#features .card p {
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+/* User Feedback Section */
+#feedback {
+  background-color: #f1f5f9;
+  padding: 3rem;
   text-align: center;
-  padding: 20px;
-  background: #333;
-  color: white;
-  border-radius: 8px 8px 0 0;
 }
 
-header span {
-  font-weight: bold;
+#feedback h3 {
+  font-size: 2rem;
+  color: #1e3a8a;
+  margin-bottom: 2rem;
 }
 
-.open {
-  color: green;
-}
-
-.closed {
-  color: red;
-}
-
-/* Stats Cards */
-.stats {
+#feedback .flex {
   display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
 }
 
-.card {
-  background: #007bff;
-  color: white;
-  padding: 20px;
+#feedback .p-6 {
+  background-color: white;
+  padding: 1.5rem;
   border-radius: 8px;
-  text-align: center;
-  width: 30%;
-  font-size: 18px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+}
+
+#feedback .p-6 p {
+  font-size: 1.125rem;
+  color: #4b5563;
+}
+
+#feedback .p-6 h4 {
+  margin-top: 1rem;
   font-weight: bold;
+  color: #1e3a8a;
 }
 
-.card:nth-child(2) {
-  background: #28a745;
-}
-
-.card:nth-child(3) {
-  background: #ffc107;
-}
-
-/* Votes Tally */
-.votes-tally {
-  margin-top: 30px;
-}
-
-.votes-tally table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.votes-tally th,
-.votes-tally td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-}
-
-.votes-tally th {
-  background: #007bff;
+/* Footer */
+footer {
+  background-color: #1e3a8a;
   color: white;
-}
-
-/* Audit Log */
-.audit {
-  margin-top: 30px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-left: 4px solid #007bff;
-}
-
-/* Progress Bar Styling */
-.progress-bar {
-  width: 100%;
-  background: #eee;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-top: 10px;
-}
-
-.progress {
-  background: green;
-  color: white;
+  padding: 1.5rem;
   text-align: center;
-  padding: 5px;
-  width: 0; /* Start at 0, will be updated */
 }
