@@ -1,5 +1,4 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
 from .views import (
      home, login_view, signup_view, logout_view,dashboard,profile, change_password,vote
 )
