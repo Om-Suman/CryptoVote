@@ -38,7 +38,7 @@ To reimagine traditional voting systems by offering a **digital-first**, **acces
 ```bash
 git clone https://github.com/Om-Suman/cryptovote.git
 cd cryptovote
-
+'''
 
 Setup Instructions
 
