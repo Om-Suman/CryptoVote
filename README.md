@@ -29,89 +29,57 @@ To reimagine traditional voting systems by offering a **digital-first**, **acces
 - 📈 Exportable results and detailed analytics  
 - 🛠️ More granular admin controls for fine-tuned management
 
-## 1️⃣ Clone the Repository
 
-Clone the **CryptoVote** repository to your local machine using the following command:
-git clone https://github.com/yourusername/cryptovote.git 
-cd cryptovote
+## Installation Guide
 
+Follow these steps to get CryptoVote up and running locally.
 
----
+### Prerequisites
 
-## 2️⃣ Create a Virtual Environment
+Make sure you have the following installed:
 
-For **Windows**, create a virtual environment and activate it with the following commands:
+- [Python 3.8+](https://www.python.org/downloads/)
+- [Django 3.2+](https://www.djangoproject.com/)
+- [SQLite](https://www.sqlite.org/) (included by default with Django)
+- [Git](https://git-scm.com/)
 
-python -m venv myvenv 
-myvenv\Scripts\activate
+### Steps to Run the Project Locally
 
+```bash
+# 1. Clone the Repository and Navigate into the Project Directory
+git clone https://github.com/Om-Suman/CryptoVote.git
+cd CryptoVote
 
-For **macOS/Linux**, use the following commands:
+# 2. Set up a Virtual Environment
+python -m venv venv
 
+# On Windows, activate the virtual environment
+venv\Scripts\activate
 
----
+# On macOS/Linux, activate the virtual environment
+source venv/bin/activate
 
-## 3️⃣ Install Python Dependencies
-
-Once the virtual environment is activated, install the required dependencies from the `requirements.txt` file by running:
-
+# 3. Install Dependencies
 pip install -r requirements.txt
 
-
-This will install the necessary libraries for your Django backend.
-
----
-
-## 4️⃣ Apply Migrations
-
-Now, create the migration files for the database:
-
-python manage.py makemigrations
-
-
-Then, apply the migrations to set up the database tables:
-
-
-Then, apply the migrations to set up the database tables:
-
+# 4. Apply Migrations
 python manage.py migrate
 
-
-This will create all the necessary tables in your SQLite database.
-
----
-
-## 5️⃣ Create a Superuser Account
-
-To manage the application and access the admin panel, create a superuser account by running:
-
+# 5. Create a Superuser
 python manage.py createsuperuser
 
+# Follow the prompts to set up the superuser credentials.
 
-Follow the prompts to set up your superuser credentials.
-
----
-
-## 6️⃣ Run the Development Server
-
-Once the backend is set up, you can start the development server with:
-
+# 6. Start the Development Server
 python manage.py runserver
 
+# 7. Access the App
+# Open the app in your browser:
+http://127.0.0.1:8000/
 
-This will start the Django development server, and you can access the app at [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
-
----
-
-## 7️⃣ Access the Admin Panel
-
-To manage users, polls, and elections, access the Django admin panel at [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) and log in using the superuser credentials you created earlier.
-
----
-
-## 8️⃣ Testing the Application (Optional)
-
-If you'd like to run tests to ensure everything is working correctly, run the following command:
+# You can access the Django admin panel at:
+http://127.0.0.1:8000/admin/
+# Log in using the superuser credentials you created earlier.
 
 
 
