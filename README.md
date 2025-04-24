@@ -26,6 +26,7 @@ git clone https://github.com/Om-Suman/cryptovote.git
 cd cryptovote
 
 2.Create a Virtual Environment
+```bash
 python -m venv myvenv
 myvenv\Scripts\activate   # On MACs use: source myvenv/bin/activate  
 
