@@ -132,8 +132,8 @@ def profile(request):
     timezones = pytz.all_timezones
 
     if request.method == 'POST':
-        first_name = request.POST.get('fullName', '')
-        last_name = request.POST.get('nickName', '')
+        first_name = request.POST.get('firstName', '')
+        last_name = request.POST.get('lastName', '')
         gender = request.POST.get('gender', '')
         country = request.POST.get('country', '')
         email = request.POST.get('email', '')

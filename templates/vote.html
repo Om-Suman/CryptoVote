@@ -1,57 +1,48 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vote - CryptoVote</title>
 
-    <!-- Inline Styles -->
     <style>
-      /* General styling */
+      /* General Styling */
       body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
         flex-direction: column;
-        background-color: #f4f7fc;
         background-color: #f4f4f4;
         height: 100vh;
       }
 
-      /* Sidebar Styles */
+      /* Sidebar */
       .sidebar {
         width: 225px;
         background-color: #1a1d26;
         color: #fff;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
         padding: 20px 15px;
         position: fixed;
         height: 100vh;
-        z-index: 10;
       }
-
       .sidebar h2 {
         text-align: left;
         margin-bottom: 20px;
         padding-left: 10px;
         font-size: 22px;
       }
-
       .sidebar ul {
         list-style-type: none;
-        padding-left: 0;
+        padding: 0;
         margin-top: 10px;
       }
-
-      /* Sidebar Links */
       .sidebar ul li {
-        margin-bottom: 10px; /* Space between links */
+        margin-bottom: 10px;
       }
-
       .sidebar ul li a {
         text-decoration: none;
         color: #fff;
@@ -61,50 +52,31 @@
         font-size: 16px;
         transition: background 0.3s, padding-left 0.2s;
       }
-
-      /* Hover effect */
       .sidebar ul li a:hover {
         background-color: #333945;
-        padding-left: 20px; /* Slight indent on hover */
+        padding-left: 20px;
       }
-
-      /* Active link styling */
       .sidebar ul li a.active {
         background-color: #333945;
-        border-left: 4px solid #4f8cf7; /* Blue left border */
-        border-radius: 8px;
+        border-left: 4px solid #4f8cf7;
         font-weight: bold;
-        color: #fff;
       }
 
-      /* Main Content */
+      /* Content */
       .content {
         margin-left: 270px;
         padding: 20px;
       }
-
       h1,
       h2 {
-        margin-top: 20;
+        margin-top: 20px;
       }
 
       /* Election container */
       .election-container {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      @media (min-width: 768px) {
-        .election-container {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-
-      .scroll-wrapper {
-        max-height: 75vh;
+        max-height: 400px;
         overflow-y: auto;
-        padding-right: 10px;
-        margin-top: 10px;
+        margin-top: 20px;
       }
 
       .election-box {
@@ -113,7 +85,7 @@
         border: 1px solid #ddd;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
+        margin-bottom: 20px;
       }
 
       .vote-form {
@@ -121,24 +93,48 @@
       }
 
       .candidate-option {
-        display: block;
-        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin: 2px 0;
+      }
+
+      .candidate-name {
+        margin-left: 8px;
+        font-size: 16px;
+        color: #333;
+      }
+
+      /* Square Checkbox */
+      .candidate-checkbox {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      /* Glow effect on hover (only for checkbox) */
+      .candidate-option:hover .candidate-checkbox {
+        border-color: #1abc9c;
+        box-shadow: 0 0 10px rgba(26, 188, 156, 0.6);
       }
 
       .btn-vote {
-        padding: 10px 20px;
+        padding: 12px 20px;
         background-color: #1abc9c;
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        margin-top: 20px;
       }
 
       .btn-vote:hover {
         background-color: #16a085;
       }
 
-      /* Results section */
       .results-section {
         margin-top: 20px;
       }
@@ -172,6 +168,58 @@
         margin-top: 20px;
       }
 
+      /* Messages Styling */
+      .messages {
+        margin-bottom: 20px;
+      }
+      .message {
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        animation: slideDown 0.5s ease;
+      }
+      .message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .message.info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        font-weight: bold;
+        color: inherit;
+        cursor: pointer;
+      }
+      .icon {
+        margin-right: 10px;
+        font-size: 22px;
+      }
+      @keyframes slideDown {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
     </style>
   </head>
 
@@ -184,41 +232,48 @@
           <a
             href="{% url 'dashboard' %}"
             class="{% if active_page == 'dashboard' %}active{% endif %}"
+            >📊 Dashboard</a
           >
-            <i>📊</i> Dashboard
-          </a>
         </li>
         <li>
           <a
             href="{% url 'profile' %}"
             class="{% if active_page == 'profile' %}active{% endif %}"
+            >👤 Profile</a
           >
-            <i>👤</i> Profile
-          </a>
         </li>
         <li>
           <a
             href="{% url 'vote' %}"
             class="{% if active_page == 'vote' %}active{% endif %}"
+            >🗳️ Vote</a
           >
-            <i>🗳️</i> Vote
-          </a>
         </li>
         <li><a href="{% url 'change_password' %}">🔒 Change Password</a></li>
-        <li>
-          <a href="{% url 'logout' %}"><i>📚</i> Logout</a>
-        </li>
+        <li><a href="{% url 'logout' %}">📚 Logout</a></li>
       </ul>
     </div>
 
-    <!-- Main Content -->
+    <!-- Content -->
     <div class="content">
       <h1>🗳️ Vote</h1>
+
+      <!-- Messages -->
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+          <span class="icon"></span>
+          <span class="text">{{ message }}</span>
+          <span class="close-btn">&times;</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
 
       <!-- Ongoing Elections Section -->
       <h2>🕒 Ongoing Elections</h2>
       {% if ongoing_elections %}
-      <div class="scroll-wrapper"
       <div class="election-container">
         {% for election in ongoing_elections %}
         <div class="election-box">
@@ -226,7 +281,7 @@
           <p>{{ election.description }}</p>
 
           {% if election.id in voted_election_ids %}
-          <!-- Show candidate information after voting -->
+          <!-- Already Voted -->
           <div class="results-section">
             <h4>📝 Candidate Results:</h4>
             <table class="styled-table">
@@ -252,7 +307,7 @@
             </p>
           </div>
           {% else %}
-          <!-- Show vote form if not voted yet -->
+          <!-- Vote Form -->
           <form method="POST" action="{% url 'vote' %}" class="vote-form">
             {% csrf_token %}
             <input type="hidden" name="election_id" value="{{ election.id }}" />
@@ -264,8 +319,11 @@
                   name="candidate_id"
                   value="{{ candidate.id }}"
                   required
+                  class="candidate-checkbox"
                 />
-                <span>{{ candidate.name }} ({{ candidate.department }})</span>
+                <span class="candidate-name"
+                  >{{ candidate.name }} ({{ candidate.department }})</span
+                >
               </label>
               {% empty %}
               <p class="no-candidates">
@@ -279,10 +337,45 @@
         </div>
         {% endfor %}
       </div>
-    </div>
       {% else %}
       <p class="no-elections">No ongoing elections at the moment.</p>
       {% endif %}
     </div>
+
+    <!-- Scripts -->
+    <script>
+      setTimeout(function () {
+        const messages = document.querySelectorAll(".message");
+        messages.forEach(function (message) {
+          message.style.transition = "opacity 0.5s ease";
+          message.style.opacity = "0";
+          setTimeout(() => message.remove(), 500);
+        });
+      }, 3000);
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const closeBtns = document.querySelectorAll(".close-btn");
+        closeBtns.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            const message = this.parentElement;
+            message.style.transition = "opacity 0.5s ease";
+            message.style.opacity = "0";
+            setTimeout(() => message.remove(), 500);
+          });
+        });
+
+        const messages = document.querySelectorAll(".message");
+        messages.forEach(function (message) {
+          const icon = message.querySelector(".icon");
+          if (message.classList.contains("success")) {
+            icon.innerHTML = "✅";
+          } else if (message.classList.contains("error")) {
+            icon.innerHTML = "❌";
+          } else if (message.classList.contains("info")) {
+            icon.innerHTML = "ℹ️";
+          }
+        });
+      });
+    </script>
   </body>
 </html>
