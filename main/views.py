@@ -6,8 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Count
 from datetime import datetime
-from .models import Election, Vote, Candidate,Profile
+from .models import Election, Vote, Candidate,Profile,EmailOTP
 from django.utils import timezone
+from django.core.mail import send_mail
+from datetime import timedelta
+import random
 import json
 import pycountry
 import pytz
@@ -16,6 +19,16 @@ import re
 def home(request):
     return render(request, 'home.html')
 
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+def send_otp_email(email, otp):
+    subject = 'Your CryptoVote OTP Code'
+    message = f'Your OTP for CryptoVote is: {otp}'
+    from_email = 'noreply@cryptovote.com'
+    recipient_list = [email]
+    send_mail(subject, message, from_email, recipient_list)
+
 def signup_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -23,42 +36,36 @@ def signup_view(request):
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
 
-        # Check if passwords match
+        # Password checks
         if password1 != password2:
             messages.error(request, "Passwords do not match!")
             return redirect("signup")
 
-        # Check if username already exists
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken!")
             return redirect("signup")
 
-        # Check if email already exists
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already in use!")
             return redirect("signup")
 
-        # Password length check
         if len(password1) < 8:
             messages.error(request, "Password must be at least 8 characters long!")
             return redirect("signup")
 
-        # Check if password is too similar to username
         if username.lower() in password1.lower():
             messages.error(request, "Password is too similar to the username!")
             return redirect("signup")
 
-        # Check for common passwords (basic example)
         common_passwords = ["password", "123456", "qwerty", "abc123"]
         if password1.lower() in common_passwords:
             messages.error(request, "Password is too common!")
             return redirect("signup")
 
-        # Check for at least one number, one uppercase letter, and one lowercase letter
         if not re.search(r"\d", password1):
             messages.error(request, "Password must contain at least one number!")
             return redirect("signup")
-        
+
         if not re.search(r"[A-Z]", password1):
             messages.error(request, "Password must contain at least one uppercase letter!")
             return redirect("signup")
@@ -67,15 +74,92 @@ def signup_view(request):
             messages.error(request, "Password must contain at least one lowercase letter!")
             return redirect("signup")
 
-        # Create user
-        user = User.objects.create_user(username=username, email=email, password=password1)
-        user.save()
+        # Save OTP
+        otp = generate_otp()
+        expires_at = timezone.now() + timedelta(minutes=5)
 
-        messages.success(request, "Account created successfully! Please log in.")
-        return redirect("login")
+        EmailOTP.objects.update_or_create(
+            email=email,
+            defaults={"otp": otp, "expires_at": expires_at, "resend_count": 0}
+        )
+
+        send_otp_email(email, otp)
+
+        # Save user data temporarily in session
+        request.session["temp_user_data"] = {
+            "username": username,
+            "email": email,
+            "password": password1
+        }
+
+        messages.success(request, "OTP sent to your email. Please verify.")
+        return redirect("verify_otp")
 
     return render(request, "signup.html")
 
+def verify_otp_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        entered_otp = request.POST.get('otp')
+
+        try:
+            email_otp = EmailOTP.objects.get(email=email)
+        except EmailOTP.DoesNotExist:
+            messages.error(request, 'Invalid email or OTP.')
+            return redirect('verify_otp')
+
+        if email_otp.is_expired():
+            messages.error(request, 'OTP has expired.')
+            return redirect('verify_otp')
+
+        if email_otp.otp != entered_otp:
+            messages.error(request, 'Incorrect OTP.')
+            return redirect('verify_otp')
+
+        temp_data = request.session.get('temp_user_data')
+        if not temp_data or temp_data['email'] != email:
+            messages.error(request, "Session expired or mismatched email.")
+            return redirect("signup")
+
+        user = User.objects.create_user(
+            username=temp_data['username'],
+            email=temp_data['email'],
+            password=temp_data['password']
+        )
+        user.save()
+
+        email_otp.delete()
+        del request.session['temp_user_data']
+        messages.success(request, "Account verified and created successfully!")
+        return redirect("login")
+
+    return render(request, "verify_otp.html")
+
+def resend_otp_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        try:
+            email_otp = EmailOTP.objects.get(email=email)
+        except EmailOTP.DoesNotExist:
+            messages.error(request, 'Email not found.')
+            return redirect('resend_otp')
+
+        if email_otp.resend_count >= 3:
+            messages.error(request, 'Max resend attempts reached.')
+            return redirect('resend_otp')
+
+        otp = generate_otp()
+        email_otp.otp = otp
+        email_otp.expires_at = timezone.now() + timedelta(minutes=5)
+        email_otp.resend_count += 1
+        email_otp.save()
+
+        send_otp_email(email, otp)
+        messages.success(request, 'OTP resent successfully.')
+        return redirect('verify_otp')
+
+    return render(request, "resend_otp.html")
 
 def login_view(request):
     if request.method == "POST":
