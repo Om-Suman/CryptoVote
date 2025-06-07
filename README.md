@@ -25,7 +25,6 @@ To reimagine traditional voting systems by offering a **digital-first**, **acces
 ## 🔮 Future Enhancements
 
 - 🔗 Blockchain integration for decentralized vote logs  
-- 🔐 OTP-based login for enhanced security  
 - 📈 Exportable results and detailed analytics  
 - 🛠️ More granular admin controls for fine-tuned management
 
