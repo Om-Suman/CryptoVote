@@ -135,31 +135,6 @@ def verify_otp_view(request):
 
     return render(request, "verify_otp.html")
 
-def resend_otp_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-
-        try:
-            email_otp = EmailOTP.objects.get(email=email)
-        except EmailOTP.DoesNotExist:
-            messages.error(request, 'Email not found.')
-            return redirect('resend_otp')
-
-        if email_otp.resend_count >= 3:
-            messages.error(request, 'Max resend attempts reached.')
-            return redirect('resend_otp')
-
-        otp = generate_otp()
-        email_otp.otp = otp
-        email_otp.expires_at = timezone.now() + timedelta(minutes=5)
-        email_otp.resend_count += 1
-        email_otp.save()
-
-        send_otp_email(email, otp)
-        messages.success(request, 'OTP resent successfully.')
-        return redirect('verify_otp')
-
-    return render(request, "resend_otp.html")
 
 def login_view(request):
     if request.method == "POST":
